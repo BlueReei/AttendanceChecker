@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Attendance Checker</string>
+    <string name="warning_text">Пожалуйста подтвердите выдачу прав приложению для дальнейшей работы</string>
+    <string name="pupil_search_hint">Введите ваш поисковой запрос</string>
+</resources>
