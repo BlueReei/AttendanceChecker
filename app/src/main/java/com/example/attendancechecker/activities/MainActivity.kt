@@ -30,7 +30,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         setContentView(R.layout.activity_main)
         mtxt_hello_user = findViewById(R.id.txt_hello_user)
         mcpv_circural_bar = findViewById(R.id.cpv_circural_bar)
-        var pupil1 = PupilModel(Avatar = "https://static.mk.ru/upload/entities/2020/04/14/15/articles/detailPicture/f9/aa/3a/55/eb9f0dcbfe069ff7c772b31e88c4210b.jpg", Group = "27тп", Name = "Андрей", Surname = "Паска", Thirdname = "Сергеевич", Hashcode = null)
+        var pupil1 = PupilModel(Avatar = "https://static.mk.ru/upload/entities/2020/04/14/15/articles/detailPicture/f9/aa/3a/55/eb9f0dcbfe069ff7c772b31e88c4210b.jpg", Group = "27тп", Name = "Андрей", Surname = "Паска", Thirdname = "Сергеевич", Hashcode = -32741541)
         var pupil2 = PupilModel(Avatar = null, Group = "27тп", Name = "Владислав", Surname = "Петров", Thirdname = "ХЗ", Hashcode = null)
         var pupil3 = PupilModel(Avatar = null, Group = "27тп", Name = "Антон", Surname = "Юлбарисов", Thirdname = "ХЗ", Hashcode = null)
         pupilsList.add(pupil1)
@@ -52,12 +52,13 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     override fun EndLoading() {
         mcpv_circural_bar.visibility = View.GONE
+        mtxt_hello_user.text = "Здравствуй ${pupilsList[0].Surname} ${pupilsList[0].Name}!"
         mtxt_hello_user.visibility = View.VISIBLE
     }
 
     override fun DeviceLogin() {
         var HashList : ArrayList<Int?> = ArrayList()
-        pupilsList.forEach { HashList.plus(it) }
+        pupilsList.forEach { HashList.add(it.Hashcode) }
         if (HashList.contains(GenerateId().hashCode())) {
             mainPresenter.login(isSuccess = true)
         } else {

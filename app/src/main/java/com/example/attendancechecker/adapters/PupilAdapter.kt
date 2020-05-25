@@ -1,5 +1,7 @@
 package com.example.attendancechecker.adapters
 
+import android.os.Build
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,16 +31,22 @@ class PupilAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         }
     }
 
+    fun GenerateId() : String {
+        val uniquePseudoID = "35" + Build.BOARD.length % 10 + Build.BRAND.length % 10 + Build.DEVICE.length % 10 + Build.DISPLAY.length % 10 + Build.HOST.length % 10 + Build.ID.length % 10 + Build.MANUFACTURER.length % 10 + Build.MODEL.length % 10 + Build.PRODUCT.length % 10 + Build.TAGS.length % 10 + Build.TYPE.length % 10 + Build.USER.length % 10
+        return uniquePseudoID
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.pupil_cell, parent, false)
         val pupilViewHolder = PupilViewHolder(itemView = itemView)
-        pupilViewHolder.itemView.rootView.setOnClickListener {
+        pupilViewHolder.itemView.setOnClickListener {
             val position = pupilViewHolder.adapterPosition
             if (position != RecyclerView.NO_POSITION) {
-                    Toast.makeText(parent.context, pupilViewHolder.adapterPosition, Toast.LENGTH_SHORT).show()
+                pupilsList.forEachIndexed { index, pupilModel -> if (index == pupilViewHolder.adapterPosition) {pupilModel.Hashcode = GenerateId().hashCode(); Toast.makeText(parent.context, "${pupilModel.Surname} ${pupilModel.Hashcode}", Toast.LENGTH_SHORT).show() }}
+                    //Toast.makeText(parent.context, "${pupilViewHolder.adapterPosition}", Toast.LENGTH_SHORT).show()
             }
         }
-        return PupilViewHolder(itemView = itemView)
+        return pupilViewHolder
     }
 
     override fun getItemCount(): Int {
