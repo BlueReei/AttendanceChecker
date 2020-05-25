@@ -3,6 +3,7 @@ package com.example.attendancechecker.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
@@ -31,12 +32,10 @@ class PupilAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.pupil_cell, parent, false)
         val pupilViewHolder = PupilViewHolder(itemView = itemView)
-        pupilViewHolder.itemView.setOnClickListener {
+        pupilViewHolder.itemView.rootView.setOnClickListener {
             val position = pupilViewHolder.adapterPosition
             if (position != RecyclerView.NO_POSITION) {
-                pupilViewHolder.mTxtPupilUserName.setOnClickListener {
                     Toast.makeText(parent.context, pupilViewHolder.adapterPosition, Toast.LENGTH_SHORT).show()
-                }
             }
         }
         return PupilViewHolder(itemView = itemView)
