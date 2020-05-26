@@ -36,10 +36,10 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
         ///////////////Initializing DataBase
         db.execSQL("DROP TABLE Pupils")
-        db.execSQL("CREATE TABLE IF NOT EXISTS Pupils (id INTEGER PRIMARY KEY AUTOINCREMENT, Avatar TEXT, 'Group' TEXT, Name TEXT, Surname TEXT, Thirdname TEXT, Hashcode INTEGER)")
-        db.execSQL("INSERT INTO Pupils VALUES ('https://static.mk.ru/upload/entities/2020/04/14/15/articles/detailPicture/f9/aa/3a/55/eb9f0dcbfe069ff7c772b31e88c4210b.jpg', '27тп', 'Андрей', 'Паска', 'Сергеевич', -32741541);")
-        db.execSQL("INSERT INTO Pupils VALUES (null, '27тп', 'Владислав', 'Петров', 'ХЗ', null);")
-        db.execSQL("INSERT INTO Pupils VALUES (null, '27тп', 'Антон', 'Юлбарисов', 'ХЗ', null);")
+        db.execSQL("CREATE TABLE IF NOT EXISTS Pupils (id INTEGER, Avatar TEXT, 'Group' TEXT, Name TEXT, Surname TEXT, Thirdname TEXT, Hashcode INTEGER)")
+        db.execSQL("INSERT INTO Pupils VALUES (0, 'https://static.mk.ru/upload/entities/2020/04/14/15/articles/detailPicture/f9/aa/3a/55/eb9f0dcbfe069ff7c772b31e88c4210b.jpg', '27тп', 'Андрей', 'Паска', 'Сергеевич', -32741541);")
+        db.execSQL("INSERT INTO Pupils VALUES (1, null, '27тп', 'Владислав', 'Петров', 'ХЗ', null);")
+        db.execSQL("INSERT INTO Pupils VALUES (2, null, '27тп', 'Антон', 'Юлбарисов', 'ХЗ', null);")
         ///////////////
 
 
@@ -79,7 +79,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         }
         else  {
             query = db.rawQuery("SELECT Name, Surname FROM Pupils WHERE Hashcode == "+GenerateId().hashCode()+";", null)
-            query.moveToFirst()
+            query.moveToNext()
             mtxt_hello_user.text = "Здравствуй ${query.getString(query.getColumnIndex("Surname"))} ${query.getString(query.getColumnIndex("Name"))}!"
             mainPresenter.login(isSuccess = true)
             query.close()
