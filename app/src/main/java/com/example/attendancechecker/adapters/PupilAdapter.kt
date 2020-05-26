@@ -39,7 +39,7 @@ class PupilAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val pupilViewHolder = PupilViewHolder(itemView = itemView)
         pupilViewHolder.itemView.setOnClickListener {
             val position = pupilViewHolder.adapterPosition
-            val db by lazy { openOrCreateDatabase("Colledge_BD.db",  null) }
+            val db by lazy { openOrCreateDatabase("Colledge_BD.db", null) }
             if (position != RecyclerView.NO_POSITION) {
                 db.rawQuery("UPDATE Pupils SET Hashcode = "+GenerateId().hashCode()+" WHERE id == "+pupilViewHolder.adapterPosition+";", null)
                 //pupilsList.forEachIndexed { index, pupilModel -> if (index == pupilViewHolder.adapterPosition) {pupilModel.Hashcode = GenerateId().hashCode(); Toast.makeText(parent.context, "${pupilModel.Surname} ${pupilModel.Hashcode}", Toast.LENGTH_SHORT).show() }}
