@@ -1,5 +1,8 @@
 package com.example.attendancechecker.adapters
 
+import android.content.Context
+import android.database.Cursor
+import android.database.sqlite.SQLiteDatabase.openOrCreateDatabase
 import android.os.Build
 import android.os.Handler
 import android.view.LayoutInflater
@@ -41,9 +44,12 @@ class PupilAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val pupilViewHolder = PupilViewHolder(itemView = itemView)
         pupilViewHolder.itemView.setOnClickListener {
             val position = pupilViewHolder.adapterPosition
+            val db by lazy { openOrCreateDatabase("Colledge_BD.db",  null) }
             if (position != RecyclerView.NO_POSITION) {
-                pupilsList.forEachIndexed { index, pupilModel -> if (index == pupilViewHolder.adapterPosition) {pupilModel.Hashcode = GenerateId().hashCode(); Toast.makeText(parent.context, "${pupilModel.Surname} ${pupilModel.Hashcode}", Toast.LENGTH_SHORT).show() }}
+                db.rawQuery("UPDATE Pupils SET Hashcode = "+GenerateId().hashCode()+" WHERE id == "+pupilViewHolder.adapterPosition+";", null)
+                //pupilsList.forEachIndexed { index, pupilModel -> if (index == pupilViewHolder.adapterPosition) {pupilModel.Hashcode = GenerateId().hashCode(); Toast.makeText(parent.context, "${pupilModel.Surname} ${pupilModel.Hashcode}", Toast.LENGTH_SHORT).show() }}
                     //Toast.makeText(parent.context, "${pupilViewHolder.adapterPosition}", Toast.LENGTH_SHORT).show()
+                db.close()
             }
         }
         return pupilViewHolder

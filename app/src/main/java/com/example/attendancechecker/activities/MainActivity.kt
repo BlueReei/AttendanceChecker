@@ -1,6 +1,8 @@
 package com.example.attendancechecker.activities
 
+import android.content.Context
 import android.content.Intent
+import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
 import android.view.View
@@ -19,7 +21,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     private lateinit var mcpv_circural_bar: CircularProgressView
     private lateinit var mtxt_hello_user: TextView
-    val pupilsList: ArrayList<PupilModel> = ArrayList()
+    val db by lazy { baseContext.openOrCreateDatabase("Colledge_BD.db", Context.MODE_PRIVATE, null) }
 
 
     @InjectPresenter
@@ -30,12 +32,17 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         setContentView(R.layout.activity_main)
         mtxt_hello_user = findViewById(R.id.txt_hello_user)
         mcpv_circural_bar = findViewById(R.id.cpv_circural_bar)
-        var pupil1 = PupilModel(Avatar = "https://static.mk.ru/upload/entities/2020/04/14/15/articles/detailPicture/f9/aa/3a/55/eb9f0dcbfe069ff7c772b31e88c4210b.jpg", Group = "27тп", Name = "Андрей", Surname = "Паска", Thirdname = "Сергеевич", Hashcode = -32741541)
-        var pupil2 = PupilModel(Avatar = null, Group = "27тп", Name = "Владислав", Surname = "Петров", Thirdname = "ХЗ", Hashcode = null)
-        var pupil3 = PupilModel(Avatar = null, Group = "27тп", Name = "Антон", Surname = "Юлбарисов", Thirdname = "ХЗ", Hashcode = null)
-        pupilsList.add(pupil1)
-        pupilsList.add(pupil2)
-        pupilsList.add(pupil3)
+
+
+        ///////////////Initializing DataBase
+        db.execSQL("DROP TABLE Pupils")
+        db.execSQL("CREATE TABLE IF NOT EXISTS Pupils (id INTEGER PRIMARY KEY AUTOINCREMENT, Avatar TEXT, 'Group' TEXT, Name TEXT, Surname TEXT, Thirdname TEXT, Hashcode INTEGER)")
+        db.execSQL("INSERT INTO Pupils VALUES ('https://static.mk.ru/upload/entities/2020/04/14/15/articles/detailPicture/f9/aa/3a/55/eb9f0dcbfe069ff7c772b31e88c4210b.jpg', '27тп', 'Андрей', 'Паска', 'Сергеевич', -32741541);")
+        db.execSQL("INSERT INTO Pupils VALUES (null, '27тп', 'Владислав', 'Петров', 'ХЗ', null);")
+        db.execSQL("INSERT INTO Pupils VALUES (null, '27тп', 'Антон', 'Юлбарисов', 'ХЗ', null);")
+        ///////////////
+
+
         StartLoading()
         DeviceLogin()
     }
@@ -52,45 +59,33 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     override fun EndLoading() {
         mcpv_circural_bar.visibility = View.GONE
-        mtxt_hello_user.text = "Здравствуй ${pupilsList[0].Surname} ${pupilsList[0].Name}!"
         mtxt_hello_user.visibility = View.VISIBLE
     }
 
     override fun DeviceLogin() {
-        var HashList : ArrayList<Int?> = ArrayList()
-        pupilsList.forEach { HashList.add(it.Hashcode) }
-        if (HashList.contains(GenerateId().hashCode())) {
-            mainPresenter.login(isSuccess = true)
-        } else {
+        var hashlist : ArrayList<Int?> = ArrayList()
+        var query: Cursor = db.rawQuery("SELECT Hashcode FROM Pupils;", null)
+        if (query.moveToFirst()) {
+            do {
+                hashlist.add(query.getInt(query.getColumnIndex("Hashcode")))
+            } while (query.moveToNext())
+        }
+
+        if (!hashlist.contains(GenerateId().hashCode())) {
+            query.close()
+            db.close()
+            EndLoading()
             mainPresenter.login(isSuccess = false)
         }
+        else  {
+            query = db.rawQuery("SELECT Name, Surname FROM Pupils WHERE Hashcode == "+GenerateId().hashCode()+";", null)
+            query.moveToFirst()
+            mtxt_hello_user.text = "Здравствуй ${query.getString(query.getColumnIndex("Surname"))} ${query.getString(query.getColumnIndex("Name"))}!"
+            mainPresenter.login(isSuccess = true)
+            query.close()
+            db.close()
+        }
     }
-
-    /* override fun DeviceCheck() {
-         var hashlist = listOf<Int>()
-         var query: Cursor = db.rawQuery("SELECT Hashcode FROM Pupils;", null)
-         if (query.moveToFirst()) {
-             do {
-                 hashlist += query.getInt(4)
-             } while (query.moveToNext())
-         }
-
-         if (!hashlist.contains(GenerateId().hashCode())) {
-             query.close()
-             db.close()
-             EndLoading()
-             startActivity(intent)
-         }
-         else  {
-             query = db.rawQuery("SELECT Name, Surname FROM Pupils WHERE Hashcode == "+GenerateId().hashCode()+";", null)
-             query.moveToFirst()
-             mtxt_hello_user.text = "Здравствуй ${query.getString(1)} ${query.getString(0)}!"
-             EndLoading()
-             query.close()
-             db.close()
-         }
-
-     }*/
 
     override fun ShowError(text: String) {
         Toast.makeText(applicationContext, text, Toast.LENGTH_SHORT).show()
