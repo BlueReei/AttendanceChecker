@@ -1,6 +1,6 @@
 package com.example.attendancechecker.providers
 
-import android.database.sqlite.SQLiteDatabase.openOrCreateDatabase
+import android.content.Context
 import android.os.Handler
 import com.example.attendancechecker.models.PupilModel
 import com.example.attendancechecker.presenters.PupilPresenter
@@ -8,9 +8,9 @@ import com.example.attendancechecker.presenters.PupilPresenter
 class PupilProvider(var presenter: PupilPresenter) {
     var pupilsList: ArrayList<PupilModel> = ArrayList()
 
-    fun TestLoadPupils() {
+    fun TestLoadPupils(context: Context) {
             Handler().postDelayed({
-                val db by lazy { openOrCreateDatabase("Colledge_BD.db", null) }
+                val db by lazy { context.openOrCreateDatabase("Colledge_BD.db", Context.MODE_PRIVATE, null) }
                 var query = db.rawQuery("SELECT * FROM Pupils WHERE id == 0;", null)
                 query.moveToNext()
                 val pupil0 = PupilModel(

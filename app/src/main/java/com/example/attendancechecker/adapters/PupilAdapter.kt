@@ -1,11 +1,13 @@
 package com.example.attendancechecker.adapters
 
+import android.content.Context
 import android.database.sqlite.SQLiteDatabase.openOrCreateDatabase
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.attendancechecker.models.PupilModel
 import com.example.attendancechecker.R
@@ -39,11 +41,18 @@ class PupilAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         val pupilViewHolder = PupilViewHolder(itemView = itemView)
         pupilViewHolder.itemView.setOnClickListener {
             val position = pupilViewHolder.adapterPosition
-            val db by lazy { openOrCreateDatabase("Colledge_BD.db", null) }
+            val db by lazy { parent.context.openOrCreateDatabase("Colledge_BD.db", Context.MODE_PRIVATE, null) }
             if (position != RecyclerView.NO_POSITION) {
                 db.rawQuery("UPDATE Pupils SET Hashcode = "+GenerateId().hashCode()+" WHERE id == "+pupilViewHolder.adapterPosition+";", null)
-                //pupilsList.forEachIndexed { index, pupilModel -> if (index == pupilViewHolder.adapterPosition) {pupilModel.Hashcode = GenerateId().hashCode(); Toast.makeText(parent.context, "${pupilModel.Surname} ${pupilModel.Hashcode}", Toast.LENGTH_SHORT).show() }}
-                    //Toast.makeText(parent.context, "${pupilViewHolder.adapterPosition}", Toast.LENGTH_SHORT).show()
+                var query = db.rawQuery("SELECT id, 'Group', Name, Surname, Thirdname, Hashcode FROM Pupils WHERE id == "+pupilViewHolder.adapterPosition+";", null)
+                query.moveToNext()
+                    Toast.makeText(parent.context, "" +
+                            "${query.getInt(query.getColumnIndex("id"))} " +
+                            "${query.getString(query.getColumnIndex("Group"))} " +
+                            "${query.getString(query.getColumnIndex("Surname"))} " +
+                            "${query.getString(query.getColumnIndex("Name"))} " +
+                            "${query.getString(query.getColumnIndex("Thirdname"))} " +
+                            "${query.getInt(query.getColumnIndex("Hashcode"))}", Toast.LENGTH_SHORT).show()
                 db.close()
             }
         }

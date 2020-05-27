@@ -1,5 +1,6 @@
 package com.example.attendancechecker.activities
 
+import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -34,7 +35,7 @@ class PupilListActivity : MvpAppCompatActivity(), PupilView {
         setContentView(R.layout.activity_pupil_list)
         mCpvCirclePupils = findViewById(R.id.cpv_pupils)
         mRecyclerPupils = findViewById(R.id.recycler_pupils)
-        pupilPresenter.LoadPupils()
+        pupilPresenter.LoadPupils(baseContext)
         mAdapter = PupilAdapter()
         var mTxtEditPupil = findViewById<EditText>(R.id.txt_pupil_search)
         mTxtEditPupil.addTextChangedListener(object: TextWatcher {
