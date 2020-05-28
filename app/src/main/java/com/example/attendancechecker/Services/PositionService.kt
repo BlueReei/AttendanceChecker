@@ -14,13 +14,14 @@ import android.widget.Toast
 
 class PositionService : Service() {
 
+    val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private object locationListener : LocationListener {
         override fun onLocationChanged(location: Location?) {
-            Log.i("Service", "${location.toString()}")
+            Log.d("Service", "${location.toString()}")
         }
 
         override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
-            TODO("Not yet implemented")
+
         }
 
         override fun onProviderEnabled(p0: String?) {
@@ -28,7 +29,7 @@ class PositionService : Service() {
         }
 
         override fun onProviderDisabled(p0: String?) {
-            TODO("Not yet implemented")
+
         }
 
     }
