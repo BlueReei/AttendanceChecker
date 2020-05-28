@@ -16,7 +16,7 @@ class PupilProvider(var presenter: PupilPresenter) {
                 val pupil0 = PupilModel(
                     id = query.getInt(query.getColumnIndex("id")),
                     Avatar = query.getString(query.getColumnIndex("Avatar")),
-                    Group = query.getString(query.getColumnIndex("Group")),
+                    Groupname = query.getString(query.getColumnIndex("Groupname")),
                     Name = query.getString(query.getColumnIndex("Name")),
                     Surname = query.getString(query.getColumnIndex("Surname")),
                     Thirdname = query.getString(query.getColumnIndex("Thirdname")),
@@ -26,7 +26,7 @@ class PupilProvider(var presenter: PupilPresenter) {
                 val pupil1 = PupilModel(
                     id = query.getInt(query.getColumnIndex("id")),
                     Avatar = query.getString(query.getColumnIndex("Avatar")),
-                    Group = query.getString(query.getColumnIndex("Group")),
+                    Groupname = query.getString(query.getColumnIndex("Groupname")),
                     Name = query.getString(query.getColumnIndex("Name")),
                     Surname = query.getString(query.getColumnIndex("Surname")),
                     Thirdname = query.getString(query.getColumnIndex("Thirdname")),
@@ -36,7 +36,7 @@ class PupilProvider(var presenter: PupilPresenter) {
                 val pupil2 = PupilModel(
                     id = query.getInt(query.getColumnIndex("id")),
                     Avatar = query.getString(query.getColumnIndex("Avatar")),
-                    Group = query.getString(query.getColumnIndex("Group")),
+                    Groupname = query.getString(query.getColumnIndex("Groupname")),
                     Name = query.getString(query.getColumnIndex("Name")),
                     Surname = query.getString(query.getColumnIndex("Surname")),
                     Thirdname = query.getString(query.getColumnIndex("Thirdname")),

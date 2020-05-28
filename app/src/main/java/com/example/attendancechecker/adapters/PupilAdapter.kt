@@ -1,7 +1,6 @@
 package com.example.attendancechecker.adapters
 
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase.openOrCreateDatabase
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +24,7 @@ class PupilAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
         fun bind(pupilModel: PupilModel) {
             pupilModel.Avatar?.let {url -> Picasso.get().load(url).into(mPupilAvatar) }
-            mTxtPupilGroup.text = "${pupilModel.Group}"
+            mTxtPupilGroup.text = "${pupilModel.Groupname}"
             mTxtPupilUserName.text = "${pupilModel.Surname} ${pupilModel.Name} ${pupilModel.Thirdname}"
 
         }
@@ -43,12 +42,12 @@ class PupilAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val position = pupilViewHolder.adapterPosition
             val db by lazy { parent.context.openOrCreateDatabase("Colledge_BD.db", Context.MODE_PRIVATE, null) }
             if (position != RecyclerView.NO_POSITION) {
-                db.rawQuery("UPDATE Pupils SET Hashcode = "+GenerateId().hashCode()+" WHERE id == "+pupilViewHolder.adapterPosition+";", null)
-                var query = db.rawQuery("SELECT id, 'Group', Name, Surname, Thirdname, Hashcode FROM Pupils WHERE id == "+pupilViewHolder.adapterPosition+";", null)
+                db.execSQL("UPDATE Pupils SET Hashcode = "+GenerateId().hashCode()+" WHERE id == "+pupilViewHolder.adapterPosition+";")
+                var query = db.rawQuery("SELECT id, Groupname, Name, Surname, Thirdname, Hashcode FROM Pupils WHERE id == "+pupilViewHolder.adapterPosition+";", null)
                 query.moveToNext()
                     Toast.makeText(parent.context, "" +
                             "${query.getInt(query.getColumnIndex("id"))} " +
-                            "${query.getString(query.getColumnIndex("Group"))} " +
+                            "${query.getString(query.getColumnIndex("Groupname"))} " +
                             "${query.getString(query.getColumnIndex("Surname"))} " +
                             "${query.getString(query.getColumnIndex("Name"))} " +
                             "${query.getString(query.getColumnIndex("Thirdname"))} " +
@@ -72,7 +71,7 @@ class PupilAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     fun filter(query: String) {
         pupilsList.clear()
         mSourceList.forEach {
-            if (it.Name.contains(query, ignoreCase = true) || it.Surname.contains(query, ignoreCase = true) || it.Thirdname.contains(query, ignoreCase = true) || it.Group.contains(query, ignoreCase = true)) {
+            if (it.Name.contains(query, ignoreCase = true) || it.Surname.contains(query, ignoreCase = true) || it.Thirdname.contains(query, ignoreCase = true) || it.Groupname.contains(query, ignoreCase = true)) {
                 pupilsList.add(it)
             }
         }
