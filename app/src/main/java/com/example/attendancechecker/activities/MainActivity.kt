@@ -1,13 +1,18 @@
 package com.example.attendancechecker.activities
 
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.NonNull
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.attendancechecker.R
@@ -44,8 +49,29 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         //db.execSQL("UPDATE Pupil SET Hashcode = null WHERE id == 0;")
         StartLoading()
         DeviceLogin()
-        val service = Intent(this, PositionService::class.java)
-        startService(service)
+
+        val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+
+        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+            val service = Intent(this, PositionService::class.java)
+            startService(service)
+        } else {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 123)
+            var grantResults = IntArray(0)
+            onRequestPermissionsResult(123,arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),grantResults = grantResults)
+        }
+
+
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
+        if (requestCode == 123 && grantResults.size == 1) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                val service = Intent(this, PositionService::class.java)
+                startService(service)
+            }
+        }
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     fun GenerateId() : String {
