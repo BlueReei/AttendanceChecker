@@ -19,7 +19,9 @@ class PositionService : Service() {
     val locationManager by lazy { getSystemService(Context.LOCATION_SERVICE) as LocationManager }
     private object locationListener : LocationListener {
         override fun onLocationChanged(location: Location?) {
-            Log.d("Service", "${location.toString()}")
+            if ((location!!.longitude > 20 && location!!.longitude < 30) && (location!!.latitude > 50 && location!!.latitude < 60)) { Log.e("Service", "true") }
+            else  { Log.e("Service", "false") }
+            //Log.e("Service", "${location!!.longitude} ${location!!.latitude}")
         }
 
         override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
@@ -42,7 +44,7 @@ class PositionService : Service() {
 
     @SuppressLint("MissingPermission")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1.toFloat(), locationListener)
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.toFloat(), locationListener)
         return START_STICKY
     }
 }

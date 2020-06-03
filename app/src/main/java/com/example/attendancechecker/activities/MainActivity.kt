@@ -11,6 +11,7 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.NonNull
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.MvpAppCompatActivity
@@ -63,6 +64,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
 
     }
+
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         if (requestCode == 123 && grantResults.size == 1) {
