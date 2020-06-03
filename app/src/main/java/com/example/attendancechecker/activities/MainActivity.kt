@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
@@ -21,6 +22,7 @@ import com.example.attendancechecker.Services.PositionService
 import com.example.attendancechecker.presenters.MainPresenter
 import com.example.attendancechecker.views.MainView
 import com.github.rahatarmanahmed.cpv.CircularProgressView
+import java.security.Permissions
 
 
 class MainActivity : MvpAppCompatActivity(), MainView {
@@ -41,11 +43,11 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
 
         ///////////////Initializing DataBase
-        //db.execSQL("DROP TABLE Pupils")
-        //db.execSQL("CREATE TABLE IF NOT EXISTS Pupils (id INTEGER, Avatar TEXT, Groupname TEXT, Name TEXT, Surname TEXT, Thirdname TEXT, Hashcode INTEGER)")
-        //db.execSQL("INSERT INTO Pupils VALUES (0, 'https://static.mk.ru/upload/entities/2020/04/14/15/articles/detailPicture/f9/aa/3a/55/eb9f0dcbfe069ff7c772b31e88c4210b.jpg', '27тп', 'Андрей', 'Паска', 'Сергеевич', null);")
-        //db.execSQL("INSERT INTO Pupils VALUES (1, null, '27тп', 'Владислав', 'Петров', 'ХЗ', null);")
-        //db.execSQL("INSERT INTO Pupils VALUES (2, null, '27тп', 'Антон', 'Юлбарисов', 'ХЗ', null);")
+//        db.execSQL("DROP TABLE Pupils")
+//        db.execSQL("CREATE TABLE IF NOT EXISTS Pupils (id INTEGER, Avatar TEXT, Groupname TEXT, Name TEXT, Surname TEXT, Thirdname TEXT, Hashcode INTEGER)")
+//        db.execSQL("INSERT INTO Pupils VALUES (0, 'https://static.mk.ru/upload/entities/2020/04/14/15/articles/detailPicture/f9/aa/3a/55/eb9f0dcbfe069ff7c772b31e88c4210b.jpg', '27тп', 'Андрей', 'Паска', 'Сергеевич', null);")
+//        db.execSQL("INSERT INTO Pupils VALUES (1, null, '27тп', 'Владислав', 'Петров', 'ХЗ', null);")
+//        db.execSQL("INSERT INTO Pupils VALUES (2, null, '27тп', 'Антон', 'Юлбарисов', 'ХЗ', null);")
         ///////////////
         //db.execSQL("UPDATE Pupil SET Hashcode = null WHERE id == 0;")
         StartLoading()
@@ -53,13 +55,15 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
         val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
 
-        if (permissionStatus == PackageManager.PERMISSION_GRANTED) {
+        if (checkLocationPermission()) {
             val service = Intent(this, PositionService::class.java)
+            Log.d("ASD", "startService()")
+
             startService(service)
         } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), 123)
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 123)
             var grantResults = IntArray(0)
-            onRequestPermissionsResult(123,arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),grantResults = grantResults)
+            onRequestPermissionsResult(123,arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),grantResults = grantResults)
         }
 
 
@@ -67,9 +71,10 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
-        if (requestCode == 123 && grantResults.size == 1) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        if (requestCode == 123 && grantResults.size == 2) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 val service = Intent(this, PositionService::class.java)
+                Log.d("ASD", "startService() onRequestPermissions")
                 startService(service)
             }
         }
@@ -122,5 +127,16 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     override fun OpenPupilList() {
         startActivity(Intent(applicationContext, PupilListActivity::class.java))
+    }
+
+    private fun checkLocationPermission(): Boolean {
+        val p1 = ContextCompat
+            .checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        val p2 = ContextCompat
+            .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+        return p1 && p2
+    }
+
+    private fun requestLocationPermission() {
     }
 }
