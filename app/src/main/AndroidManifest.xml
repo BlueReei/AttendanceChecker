@@ -3,12 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.attendancechecker">
 
-
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION"/>
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
         android:allowBackup="true"
@@ -18,9 +17,14 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service
+            android:name=".Services.WriteDate"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
             android:name=".Services.PositionService"
             android:enabled="true"
             android:exported="false" />
+
         <activity android:name=".activities.PupilListActivity" />
         <activity android:name=".activities.MainActivity">
             <intent-filter>

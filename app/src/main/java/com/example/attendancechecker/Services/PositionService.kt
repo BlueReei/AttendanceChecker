@@ -1,14 +1,9 @@
 package com.example.attendancechecker.Services
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.Service
+import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
@@ -17,19 +12,22 @@ import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
-import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import com.example.attendancechecker.R
 
+
 class PositionService : Service() {
     val locationManager by lazy { getSystemService(Context.LOCATION_SERVICE) as LocationManager }
+
     private object locationListener : LocationListener {
+
+        fun GenerateId() : String {
+            val uniquePseudoID = "35" + Build.BOARD.length % 10 + Build.BRAND.length % 10 + Build.DEVICE.length % 10 + Build.DISPLAY.length % 10 + Build.HOST.length % 10 + Build.ID.length % 10 + Build.MANUFACTURER.length % 10 + Build.MODEL.length % 10 + Build.PRODUCT.length % 10 + Build.TAGS.length % 10 + Build.TYPE.length % 10 + Build.USER.length % 10
+            return uniquePseudoID
+        }
+
         override fun onLocationChanged(location: Location?) {
-            if ((location!!.longitude > 20 && location!!.longitude < 30) && (location!!.latitude > 50 && location!!.latitude < 60)) { Log.e("Service", "true") }
-            else  { Log.e("Service", "false") }
-            //Log.e("Service", "${location!!.longitude} ${location!!.latitude}")
             Log.d("Service", "${location.toString()}")
             Log.d("ASD", "onLocationChanged()")
         }
@@ -54,12 +52,15 @@ class PositionService : Service() {
 
     @SuppressLint("MissingPermission")
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.toFloat(), locationListener)
-        Log.d("ASD", "onStartCommand()")
+           // locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0.toFloat(), locationListener)
+       // Log.d("ASD", "onStartCommand()")
         createForeground()
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1.toFloat(), locationListener)
         Log.d("ASD", "onStartCommand() finish")
-//        stopSelf()
+        val proximityIntent = PendingIntent.getService(applicationContext, 123, Intent(this, WriteDate::class.java), PendingIntent.FLAG_CANCEL_CURRENT)
+        locationManager.addProximityAlert(53.658482, 23.843089, 50f, 10, proximityIntent)
+        Log.d("ASD", "onStartCommand() finish proximity")
+//       53.704299, 23.815838 stopSelf() 53.658482, 23.843089
         return START_STICKY
     }
 

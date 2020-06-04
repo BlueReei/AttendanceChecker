@@ -52,9 +52,6 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         //db.execSQL("UPDATE Pupil SET Hashcode = null WHERE id == 0;")
         StartLoading()
         DeviceLogin()
-
-        val permissionStatus = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-
         if (checkLocationPermission()) {
             val service = Intent(this, PositionService::class.java)
             Log.d("ASD", "startService()")
