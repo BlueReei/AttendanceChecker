@@ -62,7 +62,7 @@ class PupilListActivity : MvpAppCompatActivity(), PupilView {
     }
 
     override fun SetupPupilList(PupilList: ArrayList<PupilModel>) {
-        mAdapter.SetupPupils(pupilList = PupilList)
+        mAdapter.SetupPupils(PupilList)
     }
 
     override fun StartLoading() {

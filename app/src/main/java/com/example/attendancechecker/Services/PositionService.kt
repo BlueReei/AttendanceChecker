@@ -57,6 +57,7 @@ class PositionService : Service() {
         createForeground()
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1.toFloat(), locationListener)
         Log.d("ASD", "onStartCommand() finish")
+        locationManager.requestSingleUpdate(LocationManager.GPS_PROVIDER, locationListener, null)
         val proximityIntent = PendingIntent.getService(applicationContext, 123, Intent(this, WriteDate::class.java), PendingIntent.FLAG_CANCEL_CURRENT)
         locationManager.addProximityAlert(53.658482, 23.843089, 50f, 10, proximityIntent)
         Log.d("ASD", "onStartCommand() finish proximity")

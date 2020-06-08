@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "797732309696",
+    "firebase_url": "https://attendance-checker-a73ee.firebaseio.com",
+    "project_id": "attendance-checker-a73ee",
+    "storage_bucket": "attendance-checker-a73ee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:797732309696:android:32e609035b0f9c1b06bb25",
+        "android_client_info": {
+          "package_name": "com.example.attendancechecker"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "797732309696-8h5fob17vj0glv57o7kkmpvk7mkijmt6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCrykAjHmR-I7-k-xR00N3L7d0OzZdQxFk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "797732309696-8h5fob17vj0glv57o7kkmpvk7mkijmt6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

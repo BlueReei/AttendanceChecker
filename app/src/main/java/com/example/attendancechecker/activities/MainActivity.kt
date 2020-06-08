@@ -11,18 +11,18 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import androidx.annotation.NonNull
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.attendancechecker.R
 import com.example.attendancechecker.Services.PositionService
+import com.example.attendancechecker.Services.testPosition
+import com.example.attendancechecker.models.PupilModel
 import com.example.attendancechecker.presenters.MainPresenter
 import com.example.attendancechecker.views.MainView
 import com.github.rahatarmanahmed.cpv.CircularProgressView
-import java.security.Permissions
+import com.google.firebase.database.*
 
 
 class MainActivity : MvpAppCompatActivity(), MainView {
@@ -30,6 +30,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     private lateinit var mcpv_circural_bar: CircularProgressView
     private lateinit var mtxt_hello_user: TextView
     val db by lazy { baseContext.openOrCreateDatabase("Colledge_BD.db", Context.MODE_PRIVATE, null) }
+    lateinit var databasePupils : DatabaseReference
 
 
     @InjectPresenter
@@ -40,23 +41,31 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         setContentView(R.layout.activity_main)
         mtxt_hello_user = findViewById(R.id.txt_hello_user)
         mcpv_circural_bar = findViewById(R.id.cpv_circural_bar)
+        databasePupils = FirebaseDatabase.getInstance().getReference("Pupils")
+
+        val pupil1 = PupilModel(0, "https://static.mk.ru/upload/entities/2020/04/14/15/articles/detailPicture/f9/aa/3a/55/eb9f0dcbfe069ff7c772b31e88c4210b.jpg", "27тп", "Андрей", "Паска", "Сергеевич", -32741541)
+        val pupil2 = PupilModel(1, null, "27тп", "Владислав", "Петров", "ХЗ", null)
+        val pupil3 = PupilModel(2, null, "27тп", "Антон", "Юлбарисов", "ХЗ", null)
+        databasePupils.child("${pupil1.id}").setValue(pupil1)
+        databasePupils.child("${pupil2.id}").setValue(pupil2)
+        databasePupils.child("${pupil3.id}").setValue(pupil3)
 
 
         ///////////////Initializing DataBase
-//        db.execSQL("DROP TABLE Pupils")
-//        db.execSQL("CREATE TABLE IF NOT EXISTS Pupils (id INTEGER, Avatar TEXT, Groupname TEXT, Name TEXT, Surname TEXT, Thirdname TEXT, Hashcode INTEGER)")
-//        db.execSQL("INSERT INTO Pupils VALUES (0, 'https://static.mk.ru/upload/entities/2020/04/14/15/articles/detailPicture/f9/aa/3a/55/eb9f0dcbfe069ff7c772b31e88c4210b.jpg', '27тп', 'Андрей', 'Паска', 'Сергеевич', null);")
-//        db.execSQL("INSERT INTO Pupils VALUES (1, null, '27тп', 'Владислав', 'Петров', 'ХЗ', null);")
-//        db.execSQL("INSERT INTO Pupils VALUES (2, null, '27тп', 'Антон', 'Юлбарисов', 'ХЗ', null);")
+        //db.execSQL("DROP TABLE Pupils")
+        //db.execSQL("CREATE TABLE IF NOT EXISTS Pupils (id INTEGER, Avatar TEXT, Groupname TEXT, Name TEXT, Surname TEXT, Thirdname TEXT, Hashcode INTEGER)")
+        //db.execSQL("INSERT INTO Pupils VALUES (0, 'https://static.mk.ru/upload/entities/2020/04/14/15/articles/detailPicture/f9/aa/3a/55/eb9f0dcbfe069ff7c772b31e88c4210b.jpg', '27тп', 'Андрей', 'Паска', 'Сергеевич', null);")
+        //db.execSQL("INSERT INTO Pupils VALUES (1, null, '27тп', 'Владислав', 'Петров', 'ХЗ', null);")
+        //db.execSQL("INSERT INTO Pupils VALUES (2, null, '27тп', 'Антон', 'Юлбарисов', 'ХЗ', null);")
         ///////////////
         //db.execSQL("UPDATE Pupil SET Hashcode = null WHERE id == 0;")
         StartLoading()
         DeviceLogin()
         if (checkLocationPermission()) {
-            val service = Intent(this, PositionService::class.java)
+            val service = Intent(this, testPosition::class.java)
             Log.d("ASD", "startService()")
 
-            startService(service)
+            //startService(service)
         } else {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 123)
             var grantResults = IntArray(0)
@@ -95,6 +104,15 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     override fun DeviceLogin() {
         var hashlist : ArrayList<Int?> = ArrayList()
+        //databasePupils.addValueEventListener(object : ValueEventListener {
+        //    override fun onCancelled(p0: DatabaseError) {
+        //    }
+
+        //    override fun onDataChange(dataSnapshot: DataSnapshot) {
+        //        hashlist.clear()
+        //            dataSnapshot.children.forEach { it.child("hashcode").value?.let { hashlist.add(it.toString().toInt()) } }
+        //    }
+        //})
         var query: Cursor = db.rawQuery("SELECT Hashcode FROM Pupils;", null)
         if (query.moveToFirst()) {
             do {

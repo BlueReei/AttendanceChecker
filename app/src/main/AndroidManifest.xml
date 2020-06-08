@@ -16,10 +16,19 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <receiver
+            android:name=".Services.GeofenceBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
+
+        <service
+            android:name=".Services.testPosition"
+            android:enabled="true"
+            android:exported="true" />
         <service
             android:name=".Services.WriteDate"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
         <service
             android:name=".Services.PositionService"
             android:enabled="true"
