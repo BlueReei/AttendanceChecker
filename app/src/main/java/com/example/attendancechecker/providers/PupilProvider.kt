@@ -27,7 +27,7 @@ class PupilProvider(var presenter: PupilPresenter) {
                         }
                     }
                 })
-                if (pupilsList.count() != 0) presenter.PupilsLoaded(pupilList = pupilsList) else TestLoadPupils(context)
+               presenter.PupilsLoaded(pupilList = pupilsList)
             }, 2000)
     }
 }

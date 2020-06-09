@@ -16,13 +16,15 @@ import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.attendancechecker.R
-import com.example.attendancechecker.Services.PositionService
+import com.example.attendancechecker.Services.DB
+import com.example.attendancechecker.Services.TestBase
 import com.example.attendancechecker.Services.testPosition
 import com.example.attendancechecker.models.PupilModel
 import com.example.attendancechecker.presenters.MainPresenter
 import com.example.attendancechecker.views.MainView
 import com.github.rahatarmanahmed.cpv.CircularProgressView
-import com.google.firebase.database.*
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
 
 
 class MainActivity : MvpAppCompatActivity(), MainView {
@@ -49,6 +51,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         databasePupils.child("${pupil1.id}").setValue(pupil1)
         databasePupils.child("${pupil2.id}").setValue(pupil2)
         databasePupils.child("${pupil3.id}").setValue(pupil3)
+        val dbhelper = TestBase()
 
 
         ///////////////Initializing DataBase
@@ -61,6 +64,7 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         //db.execSQL("UPDATE Pupil SET Hashcode = null WHERE id == 0;")
         StartLoading()
         DeviceLogin()
+        dbhelper.ex_main()
         if (checkLocationPermission()) {
             val service = Intent(this, testPosition::class.java)
             Log.d("ASD", "startService()")
@@ -69,17 +73,14 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         } else {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 123)
             var grantResults = IntArray(0)
-            onRequestPermissionsResult(123,arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),grantResults = grantResults)
+            onRequestPermissionsResult(123, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),grantResults = grantResults)
         }
-
-
     }
-
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
         if (requestCode == 123 && grantResults.size == 2) {
             if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                val service = Intent(this, PositionService::class.java)
+                val service = Intent(this, testPosition::class.java)
                 Log.d("ASD", "startService() onRequestPermissions")
                 startService(service)
             }

@@ -40,6 +40,9 @@ dependencies {
     //Circle Loading
     implementation 'com.github.rahatarmanahmed:circularprogressview:2.5.0'
 
+    //PostgresSQL Database
+    implementation 'org.postgresql:postgresql:42.2.1'
+
     //MVP
     implementation 'tech.schoolhelper:moxy-x:1.7.0'
     implementation 'com.google.firebase:firebase-database:19.2.1'
