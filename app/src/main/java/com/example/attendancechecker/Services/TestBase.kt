@@ -9,6 +9,7 @@ class TestBase {
 
     val db = DB()
 
+
     @Throws(Exception::class)
     fun ex_main() {
         val scanner = Scanner(System.`in`)

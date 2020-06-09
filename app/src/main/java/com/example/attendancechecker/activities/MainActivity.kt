@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.database.Cursor
 import android.os.Build
 import android.os.Bundle
+import android.os.StrictMode
 import android.util.Log
 import android.view.View
 import android.widget.TextView
@@ -16,7 +17,6 @@ import androidx.core.content.ContextCompat
 import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.attendancechecker.R
-import com.example.attendancechecker.Services.DB
 import com.example.attendancechecker.Services.TestBase
 import com.example.attendancechecker.Services.testPosition
 import com.example.attendancechecker.models.PupilModel
@@ -39,6 +39,8 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     lateinit var mainPresenter : MainPresenter
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val policy = StrictMode.ThreadPolicy.Builder().permitAll().build()
+        StrictMode.setThreadPolicy(policy)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         mtxt_hello_user = findViewById(R.id.txt_hello_user)
