@@ -1,6 +1,10 @@
 package com.example.attendancechecker.activities
 
+import android.annotation.SuppressLint
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,10 +20,12 @@ import com.example.attendancechecker.R
 import com.example.attendancechecker.adapters.PupilAdapter
 import com.example.attendancechecker.models.PupilModel
 import com.example.attendancechecker.presenters.PupilPresenter
+import com.example.attendancechecker.providers.PupilProvider
 import com.example.attendancechecker.views.PupilView
 import com.github.rahatarmanahmed.cpv.CircularProgressView
 import tel.egram.kuery.sqlite.text
 import java.text.FieldPosition
+import kotlin.system.exitProcess
 
 class PupilListActivity : MvpAppCompatActivity(), PupilView {
 
@@ -35,8 +41,8 @@ class PupilListActivity : MvpAppCompatActivity(), PupilView {
         setContentView(R.layout.activity_pupil_list)
         mCpvCirclePupils = findViewById(R.id.cpv_pupils)
         mRecyclerPupils = findViewById(R.id.recycler_pupils)
-        pupilPresenter.LoadPupils(baseContext)
-        mAdapter = PupilAdapter()
+        pupilPresenter.LoadPupils()
+        mAdapter = PupilAdapter(applicationContext)
         var mTxtEditPupil = findViewById<EditText>(R.id.txt_pupil_search)
         mTxtEditPupil.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(p0: Editable?) {

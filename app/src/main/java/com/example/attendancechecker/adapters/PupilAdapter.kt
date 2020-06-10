@@ -1,19 +1,28 @@
 package com.example.attendancechecker.adapters
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.example.attendancechecker.models.PupilModel
 import com.example.attendancechecker.R
+import com.example.attendancechecker.Services.DB
+import com.example.attendancechecker.activities.MainActivity
+import com.example.attendancechecker.models.PupilModel
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
+import java.sql.Connection
+import java.sql.Statement
+import kotlin.system.exitProcess
 
-class PupilAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+
+class PupilAdapter(context: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    var context = context
     private var mSourceList: ArrayList<PupilModel> = ArrayList()
     private var pupilsList : ArrayList<PupilModel> = ArrayList()
 
@@ -38,21 +47,17 @@ class PupilAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val itemView = LayoutInflater.from(parent.context).inflate(R.layout.pupil_cell, parent, false)
         val pupilViewHolder = PupilViewHolder(itemView = itemView)
+        val db = DB()
+        val connection: Connection = db.getConnection()!!
+        val st: Statement = connection.createStatement()
         pupilViewHolder.itemView.setOnClickListener {
             val position = pupilViewHolder.adapterPosition
-            val db by lazy { parent.context.openOrCreateDatabase("Colledge_BD.db", Context.MODE_PRIVATE, null) }
             if (position != RecyclerView.NO_POSITION) {
-                db.execSQL("UPDATE Pupils SET Hashcode = "+GenerateId().hashCode()+" WHERE id == "+pupilViewHolder.adapterPosition+";")
-                var query = db.rawQuery("SELECT id, Groupname, Name, Surname, Thirdname, Hashcode FROM Pupils WHERE id == "+pupilViewHolder.adapterPosition+";", null)
-                query.moveToNext()
-                    Toast.makeText(parent.context, "" +
-                            "${query.getInt(query.getColumnIndex("id"))} " +
-                            "${query.getString(query.getColumnIndex("Groupname"))} " +
-                            "${query.getString(query.getColumnIndex("Surname"))} " +
-                            "${query.getString(query.getColumnIndex("Name"))} " +
-                            "${query.getString(query.getColumnIndex("Thirdname"))} " +
-                            "${query.getInt(query.getColumnIndex("Hashcode"))}", Toast.LENGTH_SHORT).show()
-                db.close()
+                st.executeUpdate("UPDATE pupils SET hashcode = ${GenerateId().hashCode()} WHERE id = ${pupilViewHolder.adapterPosition};")
+                st.close()
+                connection.commit()
+                connection.close()
+                //restartApp()
             }
         }
         return pupilViewHolder
@@ -67,6 +72,23 @@ class PupilAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         filter(query = "")
         notifyDataSetChanged()
     }
+
+    /*private fun restartApp() {
+        val intent = Intent(
+            context.applicationContext,
+            MainActivity::class.java
+        )
+        val mPendingIntentId = 125
+        val mPendingIntent = PendingIntent.getActivity(
+            context.applicationContext,
+            mPendingIntentId,
+            intent,
+            PendingIntent.FLAG_CANCEL_CURRENT
+        )
+        val mgr = context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        mgr[AlarmManager.RTC, System.currentTimeMillis() + 100] = mPendingIntent
+        exitProcess(0)
+    }*/
 
     fun filter(query: String) {
         pupilsList.clear()

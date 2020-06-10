@@ -1,6 +1,5 @@
 package com.example.attendancechecker.presenters
 
-import android.content.Context
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import com.example.attendancechecker.models.PupilModel
@@ -9,9 +8,9 @@ import com.example.attendancechecker.views.PupilView
 
 @InjectViewState
 class PupilPresenter : MvpPresenter<PupilView>() {
-    fun LoadPupils(context: Context) {
+    fun LoadPupils() {
         viewState.StartLoading()
-        PupilProvider(presenter = this).TestLoadPupils(context)
+        PupilProvider(presenter = this).TestLoadPupils()
     }
 
     fun PupilsLoaded(pupilList: ArrayList<PupilModel>) {

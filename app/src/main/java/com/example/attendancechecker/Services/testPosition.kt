@@ -5,13 +5,19 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
-import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.attendancechecker.R
-import com.google.android.gms.location.*
+import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.GeofencingClient
+import com.google.android.gms.location.GeofencingRequest
+import com.google.android.gms.location.LocationServices
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
+
 
 class testPosition : Service() {
 
@@ -34,10 +40,12 @@ class testPosition : Service() {
         geofenceList.add(
             Geofence.Builder()
             .setRequestId(123.toString())
-            .setCircularRegion(53.658482, 23.843089, 100F)
+            .setCircularRegion(53.704020, 23.815656, 100F)
                 .setExpirationDuration(Geofence.NEVER_EXPIRE)
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or Geofence.GEOFENCE_TRANSITION_EXIT)
             .build())
+        //53.704020, 23.815656 College
+        //53.658515, 23.842894 Home
 
         geofencingClient?.addGeofences(getGeofencingRequest(), geofencePendingIntent)?.run {
             addOnSuccessListener {
@@ -66,7 +74,7 @@ class testPosition : Service() {
             setSmallIcon(R.mipmap.ic_launcher_round)
             setCategory(Notification.CATEGORY_SERVICE)
         }.build()
-        startForeground(123, notification)
+        startForeground(124, notification)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
