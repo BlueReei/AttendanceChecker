@@ -25,14 +25,6 @@
             android:name=".Services.testPosition"
             android:enabled="true"
             android:exported="true" />
-        <service
-            android:name=".Services.WriteDate"
-            android:enabled="true"
-            android:exported="true" />
-        <service
-            android:name=".Services.PositionService"
-            android:enabled="true"
-            android:exported="false" />
 
         <activity android:name=".activities.PupilListActivity" />
         <activity android:name=".activities.MainActivity">
