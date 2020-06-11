@@ -12,8 +12,8 @@ class AlarmReciever : BroadcastReceiver() {
         connection.autoCommit = false
         val st = connection.createStatement()
         val st1 = connection.createStatement()
-        st.executeUpdate("UPDATE pupils SET leavedate = NULL WHERE comedate != NULL")
-        st1.executeUpdate("UPDATE pupils SET comedate = NULL WHERE leavedate != NULL")
+        st.executeUpdate("UPDATE pupils SET leavedate = NULL WHERE leavedate != NULL")
+        st1.executeUpdate("UPDATE pupils SET comedate = NULL WHERE comedate != NULL")
         st.close()
         st1.close()
         connection.commit()
