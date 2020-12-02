@@ -20,7 +20,7 @@ class PupilProvider(var presenter: PupilPresenter) {
                 val st: Statement = connection.createStatement()
                 var rs: ResultSet
                 st.use { st ->
-                        rs = st.executeQuery("SELECT * FROM pupils ORDER BY id")
+                        rs = st.executeQuery("SELECT * FROM pupils WHERE hashcode IS NULL ORDER BY id")
                         while (rs.next()) {
                             var pupil = PupilModel(rs.getInt(db.ID), rs.getString(db.AVATAR),  rs.getString(db.GROUP),  rs.getString(db.NAME),  rs.getString(db.SURNAME),  rs.getString(db.THIRDNAME), rs.getInt(db.HASHCODE),  rs.getString(db.COMEDATE), rs.getString(db.LEAVEDATE))
                             pupilsList.add(pupil)

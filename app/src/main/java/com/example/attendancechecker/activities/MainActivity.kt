@@ -3,6 +3,7 @@ package com.example.attendancechecker.activities
 import android.Manifest
 import android.app.AlarmManager
 import android.app.PendingIntent
+import android.app.WallpaperManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,6 +12,7 @@ import android.os.Bundle
 import android.os.StrictMode
 import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -24,8 +26,7 @@ import com.example.attendancechecker.Services.testPosition
 import com.example.attendancechecker.presenters.MainPresenter
 import com.example.attendancechecker.views.MainView
 import com.github.rahatarmanahmed.cpv.CircularProgressView
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
+import jp.wasabeef.blurry.Blurry
 import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.Statement
@@ -37,7 +38,11 @@ class MainActivity : MvpAppCompatActivity(), MainView {
 
     private lateinit var mcpv_circural_bar: CircularProgressView
     private lateinit var mtxt_hello_user: TextView
-    lateinit var databasePupils : DatabaseReference
+    private lateinit var mtxt_come: TextView
+    private lateinit var mtxt_leave: TextView
+    private lateinit var mtxt_come_date: TextView
+    private lateinit var mtxt_leave_date: TextView
+    private lateinit var rootView: FrameLayout
 
     @InjectPresenter
     lateinit var mainPresenter : MainPresenter
@@ -47,35 +52,123 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         StrictMode.setThreadPolicy(policy)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        rootView = findViewById(R.id.main_layout)
         mtxt_hello_user = findViewById(R.id.txt_hello_user)
         mcpv_circural_bar = findViewById(R.id.cpv_circural_bar)
-        databasePupils = FirebaseDatabase.getInstance().getReference("Pupils")
+        mtxt_come = findViewById(R.id.txt_come)
+        mtxt_leave = findViewById(R.id.txt_leave)
+        mtxt_come_date = findViewById(R.id.txt_come_date)
+        mtxt_leave_date = findViewById(R.id.txt_leave_date)
 
-        val mAlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmReciever::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, intent, 0)
-        val calendar = Calendar.getInstance()
-        calendar[Calendar.HOUR_OF_DAY] = 10
-        calendar[Calendar.MINUTE] = 26
-        mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, pendingIntent)
+        mtxt_come.visibility = View.GONE
+        mtxt_come_date.visibility = View.GONE
+        mtxt_leave.visibility = View.GONE
+        mtxt_leave_date.visibility = View.GONE
+
+        if (GenerateId().hashCode() == -32741541) {
+            //Every day setting dates to null
+            val mAlarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+            val intent = Intent(this, AlarmReciever::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(this, 11, intent, 0)
+            val calendar = Calendar.getInstance()
+            calendar[Calendar.HOUR_OF_DAY] = 23
+            calendar[Calendar.MINUTE] = 59
+            mAlarmManager.setRepeating(
+                AlarmManager.RTC_WAKEUP,
+                calendar.timeInMillis,
+                AlarmManager.INTERVAL_DAY,
+                pendingIntent
+            )
+            //Email
+            /*val db = DB()
+            val connection = db.getConnection()!!
+            connection.autoCommit = false
+            val st = connection.createStatement()
+            var pupilslatelist : ArrayList<String> = ArrayList()
+            pupilslatelist.clear()
+            val it = Intent(Intent.ACTION_SEND)
+            st.use { st ->
+                var rs = st.executeQuery("SELECT * FROM pupils WHERE comedate < '90000' ORDER BY groupname")
+                while (rs.next()) {
+                    pupilslatelist.add("${rs.getString(db.SURNAME)} ${rs.getString(db.NAME)} ${rs.getString(db.THIRDNAME)} - ${rs.getString(db.GROUP)} - ${rs.getString(db.COMEDATE)}")
+                }
+            }
+            it.putExtra(Intent.EXTRA_EMAIL, arrayOf("lalki351@gmail.com"))
+            it.putExtra(Intent.EXTRA_SUBJECT, "Список опоздавших")
+            it.putExtra(Intent.EXTRA_TEXT, "$pupilslatelist")
+            it.type = "message/rfc822"
+            val itPendingIntent = PendingIntent.getActivity(this, 12, it, 0)
+            calendar[Calendar.HOUR_OF_DAY] = 9
+            calendar[Calendar.MINUTE] = 30
+            st.close()
+            connection.close()
+            mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, AlarmManager.INTERVAL_DAY, itPendingIntent)*/
+        }
+
 
         StartLoading()
         DeviceLogin()
         if (checkLocationPermission()) {
             val service = Intent(this, testPosition::class.java)
+            rootView.background = WallpaperManager.getInstance(this).drawable
+            Blurry.with(this).radius(25).sampling(2).onto(rootView)
             Log.d("ASD", "startService()")
             startService(service)
         } else {
-            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION), 123)
+            ActivityCompat.requestPermissions(
+                this, arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ), 123
+            )
             var grantResults = IntArray(0)
-            onRequestPermissionsResult(123, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION),grantResults = grantResults)
+            onRequestPermissionsResult(
+                123, arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION,
+                    Manifest.permission.READ_EXTERNAL_STORAGE
+                ), grantResults = grantResults
+            )
         }
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String?>, grantResults: IntArray) {
-        if (requestCode == 123 && grantResults.size == 2) {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+    override fun onResume() {
+        Log.d("MMM", "onResume")
+        super.onResume()
+    }
+
+    override fun onRestart() {
+        Log.d("MMM", "onRestart")
+        super.onRestart()
+        recreate()
+    }
+
+    override fun onStart() {
+        Log.d("MMM", "onStart")
+        super.onStart()
+    }
+
+    override fun onStop() {
+        Log.d("MMM", "onStop")
+        super.onStop()
+    }
+
+    override fun onPause() {
+        Log.d("MMM", "onPause")
+        super.onPause()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String?>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == 123 ) {
+            if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED) {
                 val service = Intent(this, testPosition::class.java)
+                rootView.background =  WallpaperManager.getInstance(this).drawable
+                Blurry.with(this).radius(25).sampling(2).onto(rootView)
                 Log.d("ASD", "startService() onRequestPermissions")
                 startService(service)
             }
@@ -121,9 +214,41 @@ class MainActivity : MvpAppCompatActivity(), MainView {
         else  {
             val st1: Statement = connection.createStatement()
             st1.use { st ->
-                rs = st.executeQuery("SELECT name, surname FROM pupils WHERE Hashcode = ${GenerateId().hashCode()};")
+                rs = st.executeQuery("SELECT * FROM pupils WHERE Hashcode = ${GenerateId().hashCode()};")
                 while (rs.next()) {
-                    mtxt_hello_user.text = "Здравствуй ${rs.getString(db.SURNAME)} ${rs.getString(db.NAME)}!"
+                    mtxt_hello_user.text = "Здравствуй\n${rs.getString(db.SURNAME)} ${rs.getString(
+                        db.NAME
+                    )}!"
+                    if (rs.getString(db.COMEDATE) == null) {
+                        mtxt_come.visibility = View.GONE
+                        mtxt_come_date.visibility = View.GONE
+                    }
+                    if (rs.getString(db.LEAVEDATE) == null) {
+                        mtxt_leave.visibility = View.GONE
+                        mtxt_leave_date.visibility = View.GONE
+                        }
+                    rs.getString(db.COMEDATE)?.let {
+                        mtxt_come.text = "Приход"
+                        mtxt_come.visibility = View.VISIBLE
+                        if (rs.getString(db.COMEDATE).length == 6) mtxt_come_date.text = "${rs.getString(
+                            db.COMEDATE
+                        ).substring(0, 2)}:${rs.getString(db.COMEDATE).substring(2, 4)}"
+                        else mtxt_come_date.text = "${rs.getString(db.COMEDATE).substring(0, 1)}:${rs.getString(
+                            db.COMEDATE
+                        ).substring(1, 3)}"
+                        mtxt_come_date.visibility = View.VISIBLE
+                    }
+                    rs.getString(db.LEAVEDATE)?.let {
+                        mtxt_leave.text = "Уход"
+                        mtxt_leave.visibility = View.VISIBLE
+                        if (rs.getString(db.LEAVEDATE).length == 6) mtxt_leave_date.text = "${rs.getString(
+                            db.LEAVEDATE
+                        ).substring(0, 2)}:${rs.getString(db.LEAVEDATE).substring(2, 4)}"
+                        else mtxt_leave_date.text = "${rs.getString(db.LEAVEDATE).substring(0, 1)}:${rs.getString(
+                            db.LEAVEDATE
+                        ).substring(1, 3)}"
+                        mtxt_leave_date.visibility = View.VISIBLE
+                    }
                 }
             }
             st1.close()
@@ -137,7 +262,9 @@ class MainActivity : MvpAppCompatActivity(), MainView {
     }
 
     override fun OpenPupilList() {
-        startActivity(Intent(applicationContext, PupilListActivity::class.java))
+        if (mtxt_hello_user.visibility == View.VISIBLE) {
+            startActivity(Intent(applicationContext, PupilListActivity::class.java))
+        }
     }
 
     private fun checkLocationPermission(): Boolean {
@@ -145,9 +272,8 @@ class MainActivity : MvpAppCompatActivity(), MainView {
             .checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
         val p2 = ContextCompat
             .checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
-        return p1 && p2
-    }
-
-    private fun requestLocationPermission() {
+        val p3 = ContextCompat
+            .checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
+        return p1 && p2 && p3
     }
 }

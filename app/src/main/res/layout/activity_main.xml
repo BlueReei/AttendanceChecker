@@ -34,4 +34,53 @@
         app:cpv_indeterminate="true"
         android:visibility="gone"></com.github.rahatarmanahmed.cpv.CircularProgressView>
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/txt_leave"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_gravity="right"
+        android:layout_marginEnd="70dp"
+        android:layout_marginTop="100dp"
+        android:textColor="@color/cpv_default_color"
+        android:visibility="visible"
+        android:textSize="24dp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/txt_come"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="100dp"
+        android:textColor="@color/cpv_default_color"
+        android:visibility="visible"
+        android:textSize="24dp"
+        android:textStyle="bold"/>
+    <TextView
+        android:id="@+id/txt_leave_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_gravity="right"
+        android:layout_marginEnd="70dp"
+        android:layout_marginTop="135dp"
+        android:textColor="@color/colorAccent"
+        android:visibility="visible"
+        android:textSize="20dp"
+        android:textStyle="bold"/>
+
+    <TextView
+        android:id="@+id/txt_come_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_marginStart="70dp"
+        android:layout_marginTop="135dp"
+        android:textColor="@color/colorAccent"
+        android:visibility="visible"
+        android:textSize="20dp"
+        android:textStyle="bold"/>
 </FrameLayout>

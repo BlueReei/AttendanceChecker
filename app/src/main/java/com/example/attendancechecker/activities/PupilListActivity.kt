@@ -1,16 +1,13 @@
 package com.example.attendancechecker.activities
 
-import android.annotation.SuppressLint
-import android.app.AlarmManager
-import android.app.PendingIntent
-import android.content.Context
-import android.content.Intent
+import android.app.WallpaperManager
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
+import android.widget.FrameLayout
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,18 +17,15 @@ import com.example.attendancechecker.R
 import com.example.attendancechecker.adapters.PupilAdapter
 import com.example.attendancechecker.models.PupilModel
 import com.example.attendancechecker.presenters.PupilPresenter
-import com.example.attendancechecker.providers.PupilProvider
 import com.example.attendancechecker.views.PupilView
 import com.github.rahatarmanahmed.cpv.CircularProgressView
-import tel.egram.kuery.sqlite.text
-import java.text.FieldPosition
-import kotlin.system.exitProcess
 
 class PupilListActivity : MvpAppCompatActivity(), PupilView {
 
     private lateinit var mAdapter: PupilAdapter
     private lateinit var mCpvCirclePupils: CircularProgressView
     private lateinit var mRecyclerPupils: RecyclerView
+    private lateinit var layout: LinearLayout
 
     @InjectPresenter
     lateinit var pupilPresenter: PupilPresenter
@@ -39,10 +33,12 @@ class PupilListActivity : MvpAppCompatActivity(), PupilView {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_pupil_list)
+        layout = findViewById(R.id.linear_layout)
+        layout.background = WallpaperManager.getInstance(applicationContext).drawable
         mCpvCirclePupils = findViewById(R.id.cpv_pupils)
         mRecyclerPupils = findViewById(R.id.recycler_pupils)
         pupilPresenter.LoadPupils()
-        mAdapter = PupilAdapter(applicationContext)
+        mAdapter = PupilAdapter(applicationContext, this)
         var mTxtEditPupil = findViewById<EditText>(R.id.txt_pupil_search)
         mTxtEditPupil.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
@@ -67,8 +63,8 @@ class PupilListActivity : MvpAppCompatActivity(), PupilView {
         Toast.makeText(applicationContext, text, Toast.LENGTH_SHORT).show()
     }
 
-    override fun SetupPupilList(PupilList: ArrayList<PupilModel>) {
-        mAdapter.SetupPupils(PupilList)
+    override fun SetupPupilList(pupilList: ArrayList<PupilModel>) {
+        mAdapter.SetupPupils(pupilList)
     }
 
     override fun StartLoading() {
